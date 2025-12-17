@@ -1,0 +1,65 @@
+/* GLOBAL ROOT VARIABLES (SAFE) */
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #121212;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* RESET LINKS */
+a {
+  font-weight: 500;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* 🚫 REMOVE VITE CENTERING + 100vh BUG */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* BODY — DO NOT CENTER */
+body {
+  display: block;          /* ❌ was flex */
+  min-width: 320px;
+  background-color: #121212;
+}
+
+/* HEADINGS */
+h1 {
+  font-size: 2rem;
+  line-height: 1.2;
+  margin: 0;
+}
+
+/* BUTTON BASE (SAFE) */
+button {
+  border-radius: 8px;
+  border: none;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  background: none;
+}
+
+/* REMOVE LIGHT MODE OVERRIDES */
+@media (prefers-color-scheme: light) {
+  :root {
+    background-color: #121212;
+    color: rgba(255, 255, 255, 0.87);
+  }
+}
