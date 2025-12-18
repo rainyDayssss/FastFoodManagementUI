@@ -1,15 +1,15 @@
-import "../App.css";
-
 export default function ProductCard({ product, onEdit, onDelete }) {
   return (
     <div className="product-card">
-      {product.imagePath && (
-        <img
-          src={product.imagePath}
-          alt={product.name}
-          className="product-image"
-        />
-      )}
+      <div className="image-frame">
+        {product.imagePath && (
+          <img
+            src={product.imagePath}
+            alt={product.name}
+            className="product-image"
+          />
+        )}
+      </div>
 
       <h3>{product.name}</h3>
       <p>₱{product.price}</p>
