@@ -4,11 +4,12 @@ import "../App.css";
 
 export default function Sidebar() {
   const location = useLocation();
-  
+
   const menu = [
-    { name: "Product", path: "/" },
-    { name: "Payment", path: "/payment" },
+    { name: "Products", path: "/product" },
+    { name: "Order", path: "/order" },
     { name: "Kitchen", path: "/kitchen" },
+    { name: "Payment", path: "/payment" },
     { name: "Reports", path: "/reports" },
   ];
 
@@ -16,7 +17,7 @@ export default function Sidebar() {
     <div className="sidebar">
       <h2>Dashboard</h2>
       <ul>
-        {menu.map(item => (
+        {menu.map((item) => (
           <li key={item.path}>
             <Link
               to={item.path}

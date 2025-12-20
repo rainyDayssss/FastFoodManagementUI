@@ -192,3 +192,132 @@ body {
   display: flex;
   gap: 10px;
 }
+
+/* ORDER PAGE */
+.order-layout {
+  display: flex;
+  gap: 24px;
+  margin-top: 16px;
+}
+
+/* LEFT: PRODUCTS */
+.order-products {
+  flex: 2;
+}
+
+/* RIGHT: CART */
+.order-cart {
+  flex: 1;
+  background: #1f1f1f;
+  padding: 16px;
+  border-radius: 12px;
+  height: fit-content;
+}
+
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #242424;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.cart-item input {
+  width: 60px;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid #555;
+  background: #1a1a1a;
+  color: #fff;
+  text-align: center;
+}
+
+.cart-total {
+  margin-top: 12px;
+  margin-bottom: 12px;
+  font-size: 1.1rem;
+}
+
+/* FORM ROW LAYOUT */
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+/* LEFT LABEL */
+.form-label {
+  width: 60px;
+  text-align: right;
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+/* PRICE INPUT WITH PESO */
+.price-input {
+  position: relative;
+  width: 240px;
+}
+
+.price-input .peso {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  font-size: 0.9rem;
+}
+
+.price-input input {
+  width: 100%;
+  padding-left: 24px;
+}
+
+/* CART ITEM IMAGE */
+.cart-item-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cart-image {
+  width: 48px;
+  height: 48px;
+  background: #1a1a1a;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.cart-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+
+.order-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.order-card {
+  background: #1f1f1f;
+  padding: 16px;
+  border-radius: 12px;
+}
+
+.order-card ul {
+  margin: 8px 0;
+  padding-left: 20px;
+}
+
+.order-card li {
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+}

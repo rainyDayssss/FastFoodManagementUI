@@ -12,7 +12,7 @@ export default function ProductForm({ product, onSave, onCancel }) {
     const file = e.target.files[0];
     if (file) {
       setImageFile(file);
-      setImagePreview(URL.createObjectURL(file)); // preview
+      setImagePreview(URL.createObjectURL(file));
     }
   };
 
@@ -24,8 +24,8 @@ export default function ProductForm({ product, onSave, onCancel }) {
       name,
       price: Number(price),
       stock: Number(stock),
-      imagePath: imagePreview, // keep preview for now
-      imageFile, // you can send this to backend later
+      imagePath: imagePreview,
+      imageFile,
     });
   };
 
@@ -33,36 +33,59 @@ export default function ProductForm({ product, onSave, onCancel }) {
     <form className="product-form" onSubmit={submit}>
       <h2>{product ? "Edit Product" : "Add Product"}</h2>
 
-      <input
-        placeholder="Product name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        required
-      />
+      {/* NAME */}
+      <div className="form-row">
+        <span className="form-label">Name</span>
+        <input
+          placeholder="Burger"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
+      </div>
 
-      <input
-        type="number"
-        placeholder="Price"
-        value={price}
-        onChange={(e) => setPrice(e.target.value)}
-        required
-      />
+      {/* PRICE */}
+      <div className="form-row">
+        <span className="form-label">Price</span>
+        <div className="price-input">
+          <span className="peso">₱</span>
+          <input
+            type="number"
+            placeholder="0.00"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            required
+          />
+        </div>
+      </div>
 
-      <input
-        type="number"
-        placeholder="Stock"
-        value={stock}
-        onChange={(e) => setStock(e.target.value)}
-        required
-      />
+      {/* STOCK */}
+      <div className="form-row">
+        <span className="form-label">Stock</span>
+        <input
+          type="number"
+          placeholder="0"
+          value={stock}
+          onChange={(e) => setStock(e.target.value)}
+          required
+        />
+      </div>
 
-      <input type="file" accept="image/*" onChange={handleFileChange} />
+      {/* IMAGE */}
+      <div className="form-row">
+        <span className="form-label">Image</span>
+        <input type="file" accept="image/*" onChange={handleFileChange} />
+      </div>
 
       {imagePreview && (
         <img
           src={imagePreview}
           alt="Preview"
-          style={{ width: "120px", marginTop: "10px", borderRadius: "8px" }}
+          style={{
+            width: "120px",
+            marginTop: "10px",
+            borderRadius: "8px",
+          }}
         />
       )}
 

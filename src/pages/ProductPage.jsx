@@ -15,7 +15,9 @@ export default function ProductPage() {
     try {
       setLoading(true);
       const res = await productService.getAll();
-      setProducts(res.data);
+      // Filter only active products
+      const activeProducts = res.data.filter((p) => p.isActive === true);
+      setProducts(activeProducts);
     } catch (err) {
       console.error("Failed to fetch products:", err);
     } finally {
@@ -55,7 +57,10 @@ export default function ProductPage() {
         );
       } else {
         const res = await productService.create(product);
-        setProducts([...products, res.data]);
+        // Only add product if it is active
+        if (res.data.isActive === true) {
+          setProducts([...products, res.data]);
+        }
       }
     } catch (err) {
       console.error("Save failed:", err);
