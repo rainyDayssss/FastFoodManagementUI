@@ -196,7 +196,7 @@ export default function OrderPage() {
                     className="add-button"
                     onClick={() => addToCart(p)}
                   >
-                    Add to Cart
+                    Add to Order
                   </button>
                 </div>
               ))}
@@ -206,7 +206,7 @@ export default function OrderPage() {
 
         {/* CART */}
         <div className="order-cart">
-            <h3>Cart</h3>
+            <h3>Order</h3>
             {/* Table No input field styled consistently */}
             {cart.length > 0 && (
                 <div style={{ marginBottom: "12px" }}>
