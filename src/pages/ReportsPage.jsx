@@ -173,7 +173,6 @@ export default function ReportsPage() {
                     cx="50%"
                     cy="50%"
                     outerRadius={80}
-                    label={(entry) => entry.name}
                   >
                     {productData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -212,7 +211,6 @@ export default function ReportsPage() {
                     cx="50%"
                     cy="50%"
                     outerRadius={80}
-                    label={(entry) => entry.name}
                   >
                     {tableData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />

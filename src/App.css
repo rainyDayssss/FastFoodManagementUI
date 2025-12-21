@@ -368,3 +368,78 @@ body {
     font-size: 0.8rem;
   }
 }
+
+/* SWIPEABLE PRODUCT SCROLL - MOBILE */
+.order-products-mobile .product-scroll {
+  display: flex;
+  overflow-x: auto;
+  gap: 10px;           /* slightly tighter gap for mobile */
+  padding-bottom: 8px;
+  padding-left: 4px;   /* small padding at start for better visual */
+  -webkit-overflow-scrolling: touch; /* smooth scroll on iOS */
+}
+
+.order-products-mobile .product-card {
+  min-width: 140px;    /* smaller width for mobile */
+  flex-shrink: 0;
+  padding: 8px;        /* slightly smaller padding */
+  border-radius: 10px;
+  background: #242424;
+}
+
+.order-products-mobile .product-card h3 {
+  font-size: 0.85rem;  /* smaller font for mobile */
+  margin: 4px 0 2px;
+}
+
+.order-products-mobile .product-card p {
+  font-size: 0.75rem;
+  margin: 2px 0;
+}
+
+.order-products-mobile .product-card .add-button {
+  font-size: 0.8rem;
+  padding: 6px 10px;
+}
+
+/* CART MOBILE */
+.order-cart-mobile {
+  margin-top: 16px;
+  background: #1f1f1f;
+  padding: 12px;       /* slightly smaller padding */
+  border-radius: 12px;
+}
+
+/* CART ITEMS */
+.cart-item {
+  padding: 8px;
+}
+
+.cart-item-left {
+  gap: 6px;
+}
+
+.cart-image {
+  width: 40px;
+  height: 40px;
+}
+
+.cart-item input {
+  width: 50px;
+  padding: 4px;
+  font-size: 0.8rem;
+}
+
+/* TOTAL & CONFIRM BUTTON */
+.cart-total {
+  font-size: 1rem;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.add-button.confirm {
+  width: 100%;
+  font-size: 0.9rem;
+  padding: 8px 0;
+}
+

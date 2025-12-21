@@ -9,11 +9,11 @@ export default function OrderPageMobile() {
   const [tableNo, setTableNo] = useState("");
   const [loading, setLoading] = useState(true);
   const [hydrated, setHydrated] = useState(false);
+  const [showCart, setShowCart] = useState(false);
 
   const formatNumber = (num) =>
     num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-  /* Load products */
   useEffect(() => {
     const loadProducts = async () => {
       try {
@@ -28,26 +28,22 @@ export default function OrderPageMobile() {
     loadProducts();
   }, []);
 
-  /* Load cart */
   useEffect(() => {
     const savedCart = localStorage.getItem("cart");
     if (savedCart) setCart(JSON.parse(savedCart));
     setHydrated(true);
   }, []);
 
-  /* Sync cart with products */
   useEffect(() => {
     if (products.length === 0) return;
     setCart((prev) => prev.filter((c) => products.some((p) => p.id === c.id)));
   }, [products]);
 
-  /* Save cart */
   useEffect(() => {
     if (!hydrated) return;
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart, hydrated]);
 
-  /* CART ACTIONS */
   const addToCart = (product) => {
     const existing = cart.find((c) => c.id === product.id);
     if (existing) {
@@ -87,7 +83,6 @@ export default function OrderPageMobile() {
   const removeItem = (id) => setCart(cart.filter((c) => c.id !== id));
   const total = cart.reduce((sum, item) => sum + item.price * (Number(item.quantity) || 0), 0);
 
-  /* Confirm order */
   const confirmOrder = async () => {
     if (cart.length === 0) {
       alert("Cart is empty!");
@@ -106,6 +101,7 @@ export default function OrderPageMobile() {
       localStorage.removeItem("cart");
       setCart([]);
       setTableNo("");
+      setShowCart(false);
     } catch (err) {
       console.error(err);
       alert("Failed to place order. Please try again.");
@@ -118,16 +114,25 @@ export default function OrderPageMobile() {
         <h1>Order</h1>
       </div>
 
-      {/* PRODUCTS SWIPEABLE */}
-      <div className="order-products-mobile">
+      {/* PRODUCTS LIST VERTICAL SCROLL */}
+      <div
+        className="order-products-mobile"
+        style={{
+          maxHeight: "calc(100vh - 180px)",
+          overflowY: "auto",
+          paddingRight: "8px",
+        }}
+      >
         <h3>Products</h3>
         {loading ? (
           <p>Loading...</p>
         ) : (
-          <div className="product-scroll">
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             {products.map((p) => (
               <div key={p.id} className="product-card">
-                {p.imagePath && <img src={p.imagePath} alt={p.name} className="product-image" />}
+                <div className="image-frame">
+                  {p.imagePath && <img src={p.imagePath} alt={p.name} className="product-image" />}
+                </div>
                 <h3>{p.name}</h3>
                 <p>₱{formatNumber(p.price)}</p>
                 <p>Stock: {p.stock}</p>
@@ -140,61 +145,116 @@ export default function OrderPageMobile() {
         )}
       </div>
 
-      {/* COLLAPSIBLE CART */}
-      <div className="order-cart-mobile">
-        <h3>Cart ({cart.length})</h3>
+      {/* ADD TO ORDER BUTTON */}
+      {cart.length > 0 && !showCart && (
+        <button
+          className="add-button confirm"
+          style={{
+            position: "fixed",
+            bottom: "16px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 999,
+            width: "90%",
+          }}
+          onClick={() => setShowCart(true)}
+        >
+          View Order ({cart.length})
+        </button>
+      )}
 
-        {cart.length > 0 && (
-          <div className="table-input">
-            <label>
-              Table No.:
-              <input
-                type="number"
-                min="1"
-                value={tableNo}
-                onChange={(e) => setTableNo(e.target.value)}
-              />
-            </label>
-          </div>
-        )}
+      {/* CART PANEL */}
+      {showCart && (
+        <div
+          className="order-cart-mobile"
+          style={{
+            position: "fixed",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            maxHeight: "70%",
+            overflowY: "auto",
+            padding: "16px",
+            borderTopLeftRadius: "16px",
+            borderTopRightRadius: "16px",
+            background: "#1f1f1f",
+            zIndex: 1000,
+          }}
+        >
+          {/* Close button on top-right */}
+          <button
+            onClick={() => setShowCart(false)}
+            style={{
+              position: "absolute",
+              top: "12px",
+              right: "16px",
+              padding: "6px 10px",
+              borderRadius: "50%",
+              border: "none",
+              background: "#555",
+              color: "#fff",
+              cursor: "pointer",
+              fontWeight: "bold",
+              fontSize: "1rem",
+            }}
+            title="Close"
+          >
+            ×
+          </button>
 
-        {cart.length === 0 ? (
-          <p>No items yet</p>
-        ) : (
-          <>
-            {cart.map((item) => (
-              <div key={item.id} className="cart-item">
-                <div className="cart-item-left">
-                  {item.imagePath && <img src={item.imagePath} alt={item.name} className="cart-image" />}
-                  <div>
-                    <strong>{item.name}</strong>
-                    <p>₱{formatNumber(item.price)}</p>
+          <h3 style={{ marginTop: "0" }}>Order ({cart.length})</h3>
+
+          {cart.length > 0 && (
+            <div className="table-input" style={{ marginTop: "32px" }}>
+              <label>
+                Table No.:
+                <input
+                  type="number"
+                  min="1"
+                  value={tableNo}
+                  onChange={(e) => setTableNo(e.target.value)}
+                />
+              </label>
+            </div>
+          )}
+
+          {cart.map((item) => (
+            <div key={item.id} className="cart-item">
+              <div className="cart-item-left">
+                {item.imagePath && (
+                  <div className="cart-image">
+                    <img src={item.imagePath} alt={item.name} />
                   </div>
-                </div>
-
-                <div className="cart-item-actions">
-                  <input
-                    type="number"
-                    min="0"
-                    value={item.quantity}
-                    onChange={(e) => updateQuantity(item.id, e.target.value)}
-                    onBlur={() => item.quantity === "" && updateQuantity(item.id, 1)}
-                  />
-                  <button onClick={() => removeItem(item.id)}>Delete</button>
+                )}
+                <div>
+                  <strong>{item.name}</strong>
+                  <p>₱{formatNumber(item.price)}</p>
                 </div>
               </div>
-            ))}
-
-            <div className="cart-total">
-              <strong>Total: ₱{formatNumber(total)}</strong>
+              <div className="cart-item-actions">
+                <input
+                  type="number"
+                  min="0"
+                  value={item.quantity}
+                  onChange={(e) => updateQuantity(item.id, e.target.value)}
+                  onBlur={() => item.quantity === "" && updateQuantity(item.id, 1)}
+                />
+                <button className="delete" onClick={() => removeItem(item.id)}>
+                  Delete
+                </button>
+              </div>
             </div>
+          ))}
 
-            <button className="add-button confirm" onClick={confirmOrder}>
-              Confirm Order
-            </button>
-          </>
-        )}
-      </div>
+          <div className="cart-total">
+            <strong>Total: ₱{formatNumber(total)}</strong>
+          </div>
+
+          <button className="add-button confirm" onClick={confirmOrder}>
+            Confirm Order
+          </button>
+        </div>
+      )}
     </div>
   );
 }
