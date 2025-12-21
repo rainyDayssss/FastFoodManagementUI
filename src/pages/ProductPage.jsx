@@ -10,6 +10,10 @@ export default function ProductPage() {
   const [editingProduct, setEditingProduct] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // FORMAT NUMBERS WITH COMMAS
+  const formatNumber = (num) =>
+    num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
   // Load products from API
   const fetchProducts = async () => {
     try {
@@ -17,7 +21,12 @@ export default function ProductPage() {
       const res = await productService.getAll();
       // Filter only active products
       const activeProducts = res.data.filter((p) => p.isActive === true);
-      setProducts(activeProducts);
+      // Format price for display
+      const formattedProducts = activeProducts.map((p) => ({
+        ...p,
+        formattedPrice: formatNumber(p.price),
+      }));
+      setProducts(formattedProducts);
     } catch (err) {
       console.error("Failed to fetch products:", err);
     } finally {
@@ -53,13 +62,12 @@ export default function ProductPage() {
       if (product.id) {
         await productService.update(product.id, product);
         setProducts(
-          products.map((p) => (p.id === product.id ? product : p))
+          products.map((p) => (p.id === product.id ? { ...product, formattedPrice: formatNumber(product.price) } : p))
         );
       } else {
         const res = await productService.create(product);
-        // Only add product if it is active
         if (res.data.isActive === true) {
-          setProducts([...products, res.data]);
+          setProducts([...products, { ...res.data, formattedPrice: formatNumber(res.data.price) }]);
         }
       }
     } catch (err) {

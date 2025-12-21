@@ -1,4 +1,8 @@
 export default function ProductCard({ product, onEdit, onDelete }) {
+  // Format price inside the card (in case it's not pre-formatted)
+  const formatNumber = (num) =>
+    num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
   return (
     <div className="product-card">
       <div className="image-frame">
@@ -12,7 +16,7 @@ export default function ProductCard({ product, onEdit, onDelete }) {
       </div>
 
       <h3>{product.name}</h3>
-      <p>₱{product.price}</p>
+      <p>₱{formatNumber(product.price)}</p> {/* formatted price */}
       <p>Stock: {product.stock}</p>
 
       <div className="card-actions">

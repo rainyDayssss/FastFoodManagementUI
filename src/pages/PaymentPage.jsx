@@ -7,6 +7,10 @@ export default function PaymentPage() {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  /* FORMAT NUMBERS WITH COMMAS */
+  const formatNumber = (num) =>
+    num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
   /* LOAD COMPLETED ORDERS */
   const loadOrders = async () => {
     setLoading(true);
@@ -93,7 +97,7 @@ export default function PaymentPage() {
                         marginBottom: "10px",
                       }}
                     >
-                      Total: ₱{order.total.toFixed(2)}
+                      Total: ₱{formatNumber(order.total)}
                     </div>
 
                     <button
@@ -145,16 +149,16 @@ export default function PaymentPage() {
                           color: "#9ca3af",
                         }}
                       >
-                        ₱{item.unitPrice.toFixed(2)} × {item.quantity}
+                        ₱{formatNumber(item.unitPrice)} × {item.quantity}
                       </div>
                     </div>
 
-                    <div>₱{item.lineTotal.toFixed(2)}</div>
+                    <div>₱{formatNumber(item.lineTotal)}</div>
                   </div>
                 ))}
 
                 <div className="cart-total">
-                  <strong>Total: ₱{selectedOrder.total.toFixed(2)}</strong>
+                  <strong>Total: ₱{formatNumber(selectedOrder.total)}</strong>
                 </div>
 
                 <button

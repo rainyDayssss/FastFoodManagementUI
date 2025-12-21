@@ -6,9 +6,15 @@ import "../App.css";
 export default function OrderPage() {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
-  const [tableNo, setTableNo] = useState(""); // Table number input
+  const [tableNo, setTableNo] = useState("");
   const [loading, setLoading] = useState(true);
   const [hydrated, setHydrated] = useState(false);
+
+  /* =========================
+     FORMAT NUMBERS WITH COMMAS
+  ========================== */
+  const formatNumber = (num) =>
+    num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   /* =========================
      LOAD PRODUCTS
@@ -34,9 +40,7 @@ export default function OrderPage() {
   ========================== */
   useEffect(() => {
     const savedCart = localStorage.getItem("cart");
-    if (savedCart) {
-      setCart(JSON.parse(savedCart));
-    }
+    if (savedCart) setCart(JSON.parse(savedCart));
     setHydrated(true);
   }, []);
 
@@ -71,9 +75,7 @@ export default function OrderPage() {
       }
       setCart(
         cart.map((c) =>
-          c.id === product.id
-            ? { ...c, quantity: Number(c.quantity) + 1 }
-            : c
+          c.id === product.id ? { ...c, quantity: Number(c.quantity) + 1 } : c
         )
       );
     } else {
@@ -140,7 +142,6 @@ export default function OrderPage() {
     }
 
     try {
-      // Prepare CreateOrderDTO
       const createOrderDTO = {
         tableId: Number(tableNo),
         items: cart.map((item) => ({
@@ -149,12 +150,9 @@ export default function OrderPage() {
         })),
       };
 
-      // Send to backend
       await orderService.create(createOrderDTO);
 
       alert("Order placed successfully!");
-
-      // Clear cart and table number
       localStorage.removeItem("cart");
       setCart([]);
       setTableNo("");
@@ -181,21 +179,12 @@ export default function OrderPage() {
               {products.map((p) => (
                 <div key={p.id} className="product-card">
                   <div className="image-frame">
-                    {p.imagePath && (
-                      <img
-                        src={p.imagePath}
-                        alt={p.name}
-                        className="product-image"
-                      />
-                    )}
+                    {p.imagePath && <img src={p.imagePath} alt={p.name} className="product-image" />}
                   </div>
                   <h3>{p.name}</h3>
-                  <p>₱{p.price}</p>
+                  <p>₱{formatNumber(p.price)}</p>
                   <p>Stock: {p.stock}</p>
-                  <button
-                    className="add-button"
-                    onClick={() => addToCart(p)}
-                  >
+                  <button className="add-button" onClick={() => addToCart(p)}>
                     Add to Order
                   </button>
                 </div>
@@ -206,89 +195,80 @@ export default function OrderPage() {
 
         {/* CART */}
         <div className="order-cart">
-            <h3>Order</h3>
-            {/* Table No input field styled consistently */}
-            {cart.length > 0 && (
-                <div style={{ marginBottom: "12px" }}>
-                <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    Table No.:{" "}
+          <h3>Order</h3>
+          {cart.length > 0 && (
+            <div style={{ marginBottom: "12px" }}>
+              <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                Table No.:{" "}
+                <input
+                  type="number"
+                  min="1"
+                  value={tableNo}
+                  onChange={(e) => setTableNo(e.target.value)}
+                  style={{
+                    width: "60px",
+                    padding: "6px",
+                    borderRadius: "6px",
+                    border: "1px solid #555",
+                    background: "#1a1a1a",
+                    color: "#fff",
+                    textAlign: "center",
+                  }}
+                />
+              </label>
+            </div>
+          )}
+
+          {cart.length === 0 ? (
+            <p>No items yet</p>
+          ) : (
+            <>
+              {cart.map((item) => (
+                <div key={item.id} className="cart-item">
+                  <div className="cart-item-left">
+                    <div className="cart-image">
+                      {item.imagePath && <img src={item.imagePath} alt={item.name} />}
+                    </div>
+                    <div>
+                      <strong>{item.name}</strong>
+                      <p>₱{formatNumber(item.price)}</p>
+                    </div>
+                  </div>
+
+                  <div className="cart-item-actions">
                     <input
-                    type="number"
-                    min="1"
-                    value={tableNo}
-                    onChange={(e) => setTableNo(e.target.value)}
-                    style={{
-                        width: "60px",
-                        padding: "6px",
-                        borderRadius: "6px",
-                        border: "1px solid #555",
-                        background: "#1a1a1a",
-                        color: "#fff",
-                        textAlign: "center",
-                    }}
+                      type="number"
+                      min="0"
+                      value={item.quantity}
+                      onChange={(e) => updateQuantity(item.id, e.target.value)}
+                      onBlur={() => {
+                        if (item.quantity === "") updateQuantity(item.id, 1);
+                      }}
+                      style={{ width: "60px", marginRight: "8px" }}
                     />
-                </label>
+
+                    <button
+                      className="delete"
+                      style={{ padding: "4px 8px", fontSize: "0.8rem" }}
+                      onClick={() => removeItem(item.id)}
+                      title="Remove item"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
-            )}
+              ))}
 
-            {cart.length === 0 ? (
-                <p>No items yet</p>
-            ) : (
-                <>
-                {cart.map((item) => (
-                    <div key={item.id} className="cart-item">
-                    <div className="cart-item-left">
-                        <div className="cart-image">
-                        {item.imagePath && (
-                            <img src={item.imagePath} alt={item.name} />
-                        )}
-                        </div>
-                        <div>
-                        <strong>{item.name}</strong>
-                        <p>₱{item.price}</p>
-                        </div>
-                    </div>
+              <div className="cart-total">
+                <strong>Total: ₱{formatNumber(total)}</strong>
+              </div>
 
-                    <div className="cart-item-actions">
-                        <input
-                        type="number"
-                        min="0"
-                        value={item.quantity}
-                        onChange={(e) =>
-                            updateQuantity(item.id, e.target.value)
-                        }
-                        onBlur={() => {
-                            if (item.quantity === "") {
-                            updateQuantity(item.id, 1);
-                            }
-                        }}
-                        style={{ width: "60px", marginRight: "8px" }}
-                        />
-
-                        <button
-                        className="delete"
-                        style={{ padding: "4px 8px", fontSize: "0.8rem" }}
-                        onClick={() => removeItem(item.id)}
-                        title="Remove item"
-                        >
-                        Delete
-                        </button>
-                    </div>
-                    </div>
-                ))}
-
-                <div className="cart-total">
-                    <strong>Total: ₱{total.toFixed(2)}</strong>
-                </div>
-
-                <button className="add-button" onClick={confirmOrder}>
-                    Confirm Order
-                </button>
-                </>
-            )}
+              <button className="add-button" onClick={confirmOrder}>
+                Confirm Order
+              </button>
+            </>
+          )}
         </div>
-
-
       </div>
     </div>
   );
