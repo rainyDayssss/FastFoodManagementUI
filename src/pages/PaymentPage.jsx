@@ -4,12 +4,25 @@ import "../App.css";
 
 export default function PaymentPage() {
   const [orders, setOrders] = useState([]);
-  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [selectedTable, setSelectedTable] = useState(null);
   const [loading, setLoading] = useState(true);
 
   /* FORMAT NUMBERS WITH COMMAS */
   const formatNumber = (num) =>
-    num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    num.toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+
+  /* GROUP ORDERS BY TABLE */
+  const groupOrdersByTable = (orders) => {
+    return orders.reduce((acc, order) => {
+      const tableKey = order.tableId ?? "No Table";
+      if (!acc[tableKey]) acc[tableKey] = [];
+      acc[tableKey].push(order);
+      return acc;
+    }, {});
+  };
 
   /* LOAD COMPLETED ORDERS */
   const loadOrders = async () => {
@@ -29,20 +42,29 @@ export default function PaymentPage() {
     loadOrders();
   }, []);
 
-  /* CONFIRM PAYMENT */
-  const confirmPayment = async () => {
-    if (!selectedOrder) return;
+  const groupedOrders = groupOrdersByTable(orders);
+  const tables = Object.keys(groupedOrders);
+
+  /* CONFIRM PAYMENT FOR ENTIRE TABLE */
+  const confirmTablePayment = async () => {
+    if (!selectedTable) return;
 
     try {
-      await orderService.updateStatus(selectedOrder.id, {
-        orderStatus: "Paid",
-      });
+      const ordersToPay = groupedOrders[selectedTable];
 
-      setSelectedOrder(null);
+      await Promise.all(
+        ordersToPay.map((order) =>
+          orderService.updateStatus(order.id, {
+            orderStatus: "Paid",
+          })
+        )
+      );
+
+      setSelectedTable(null);
       loadOrders();
     } catch (err) {
       console.error(err);
-      alert("Failed to confirm payment.");
+      alert("Failed to confirm table payment.");
     }
   };
 
@@ -53,19 +75,25 @@ export default function PaymentPage() {
       </div>
 
       {loading ? (
-        <p>Loading orders...</p>
-      ) : orders.length === 0 ? (
+        <p>Loading tables...</p>
+      ) : tables.length === 0 ? (
         <p>No completed orders.</p>
       ) : (
         <div className="order-layout">
-          {/* LEFT — COMPLETED ORDERS */}
+          {/* LEFT — TABLE LIST */}
           <div className="order-products">
             <div className="order-grid">
-              {orders.map((order) => {
-                const isSelected = selectedOrder?.id === order.id;
+              {tables.map((tableId) => {
+                const isSelected = selectedTable === tableId;
+
+                const tableTotal = groupedOrders[tableId].reduce(
+                  (sum, order) => sum + order.total,
+                  0
+                );
+
                 return (
                   <div
-                    key={order.id}
+                    key={tableId}
                     className="order-card"
                     style={{
                       border: isSelected
@@ -74,38 +102,38 @@ export default function PaymentPage() {
                       transition: "border 0.2s",
                     }}
                   >
-                    <div style={{ marginBottom: "6px" }}>
-                      <strong>Order #{order.id}</strong>
-                    </div>
-
-                    {order.tableId && (
-                      <div
-                        style={{
-                          fontSize: "0.85rem",
-                          color: "#d1d5db",
-                          marginBottom: "6px",
-                        }}
-                      >
-                        Table {order.tableId}
-                      </div>
-                    )}
+                    <strong>
+                      {tableId === "No Table"
+                        ? "No Table"
+                        : `Table ${tableId}`}
+                    </strong>
 
                     <div
                       style={{
                         fontSize: "0.85rem",
                         color: "#9ca3af",
-                        marginBottom: "10px",
+                        marginTop: "4px",
                       }}
                     >
-                      Total: ₱{formatNumber(order.total)}
+                      Orders: {groupedOrders[tableId].length}
+                    </div>
+
+                    <div
+                      style={{
+                        fontSize: "0.85rem",
+                        color: "#d1d5db",
+                        marginTop: "6px",
+                      }}
+                    >
+                      Total: ₱{formatNumber(tableTotal)}
                     </div>
 
                     <button
                       className="add-button"
-                      style={{ width: "100%" }}
-                      onClick={() => setSelectedOrder(order)}
+                      style={{ width: "100%", marginTop: "10px" }}
+                      onClick={() => setSelectedTable(tableId)}
                     >
-                      Checkout
+                      View Orders
                     </button>
                   </div>
                 );
@@ -113,52 +141,64 @@ export default function PaymentPage() {
             </div>
           </div>
 
-          {/* RIGHT — PAYMENT DETAILS */}
+          {/* RIGHT — TABLE PAYMENT DETAILS */}
           <div className="order-cart">
-            {!selectedOrder ? (
+            {!selectedTable ? (
               <p style={{ color: "#9ca3af" }}>
-                Select an order to process payment
+                Select a table to process payment
               </p>
             ) : (
               <>
-                <h3 style={{ marginBottom: "6px" }}>
-                  Order #{selectedOrder.id}
+                <h3 style={{ marginBottom: "12px" }}>
+                  {selectedTable === "No Table"
+                    ? "No Table Orders"
+                    : `Table ${selectedTable}`}
                 </h3>
 
-                {selectedOrder.tableId && (
-                  <p
+                {groupedOrders[selectedTable].map((order) => (
+                  <div
+                    key={order.id}
                     style={{
-                      fontSize: "0.85rem",
-                      color: "#9ca3af",
-                      marginBottom: "12px",
+                      marginBottom: "16px",
+                      paddingBottom: "10px",
+                      borderBottom: "1px solid #374151",
                     }}
                   >
-                    Table {selectedOrder.tableId}
-                  </p>
-                )}
+                    <strong>Order #{order.id}</strong>
 
-                {selectedOrder.orderItems.map((item) => (
-                  <div key={item.id} className="cart-item">
-                    <div>
-                      <strong>
-                        {item.productName || `Product #${item.productId}`}
-                      </strong>
-                      <div
-                        style={{
-                          fontSize: "0.75rem",
-                          color: "#9ca3af",
-                        }}
-                      >
-                        ₱{formatNumber(item.unitPrice)} × {item.quantity}
+                    {order.orderItems.map((item) => (
+                      <div key={item.id} className="cart-item">
+                        <div>
+                          <strong>
+                            {item.productName ||
+                              `Product #${item.productId}`}
+                          </strong>
+                          <div
+                            style={{
+                              fontSize: "0.75rem",
+                              color: "#9ca3af",
+                            }}
+                          >
+                            ₱{formatNumber(item.unitPrice)} × {item.quantity}
+                          </div>
+                        </div>
+
+                        <div>₱{formatNumber(item.lineTotal)}</div>
                       </div>
-                    </div>
-
-                    <div>₱{formatNumber(item.lineTotal)}</div>
+                    ))}
                   </div>
                 ))}
 
                 <div className="cart-total">
-                  <strong>Total: ₱{formatNumber(selectedOrder.total)}</strong>
+                  <strong>
+                    Total: ₱
+                    {formatNumber(
+                      groupedOrders[selectedTable].reduce(
+                        (sum, o) => sum + o.total,
+                        0
+                      )
+                    )}
+                  </strong>
                 </div>
 
                 <button
@@ -167,7 +207,7 @@ export default function PaymentPage() {
                     background: "#10b981",
                     width: "100%",
                   }}
-                  onClick={confirmPayment}
+                  onClick={confirmTablePayment}
                 >
                   Confirm Payment
                 </button>
