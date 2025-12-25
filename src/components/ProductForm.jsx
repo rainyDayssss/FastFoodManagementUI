@@ -7,6 +7,7 @@ export default function ProductForm({ product, onSave, onCancel }) {
   const [stock, setStock] = useState(product?.stock || "");
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(product?.imagePath || "");
+  const [error, setError] = useState("");
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -19,19 +20,40 @@ export default function ProductForm({ product, onSave, onCancel }) {
   const submit = (e) => {
     e.preventDefault();
 
+    if (!name.trim()) {
+      setError("Product name is required");
+      return;
+    }
+
+    if (price <= 0) {
+      setError("Price must be greater than 0");
+      return;
+    }
+
+    if (stock < 0) {
+      setError("Stock cannot be negative");
+      return;
+    }
+
+    // Auto set active status based on stock
+    const isActive = Number(stock) > 0;
+
     onSave({
       ...product,
-      name,
+      name: name.trim(),
       price: Number(price),
       stock: Number(stock),
       imagePath: imagePreview,
       imageFile,
+      isActive,
     });
   };
 
   return (
     <form className="product-form" onSubmit={submit}>
       <h2>{product ? "Edit Product" : "Add Product"}</h2>
+
+      {error && <p className="error-text">{error}</p>}
 
       {/* NAME */}
       <div className="form-row">
@@ -55,6 +77,7 @@ export default function ProductForm({ product, onSave, onCancel }) {
             value={price}
             onChange={(e) => setPrice(e.target.value)}
             required
+            min="1"
           />
         </div>
       </div>
@@ -68,6 +91,7 @@ export default function ProductForm({ product, onSave, onCancel }) {
           value={stock}
           onChange={(e) => setStock(e.target.value)}
           required
+          min="0"
         />
       </div>
 

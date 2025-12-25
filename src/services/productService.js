@@ -18,15 +18,17 @@ const productService = {
 
   update: (id, product) => {
     const formData = new FormData();
-    if (product.name) formData.append("Name", product.name);
-    if (product.price) formData.append("Price", product.price);
-    if (product.stock) formData.append("Stock", product.stock);
+
+    if (product.name != null) formData.append("Name", product.name);
+    if (product.price != null) formData.append("Price", product.price);
+    if (product.stock != null) formData.append("Stock", product.stock); // ✔ now zero is sent
     if (product.imageFile) formData.append("Image", product.imageFile);
 
     return axiosClient.patch(`/products/${id}`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
   },
+
 
   delete: (id) => axiosClient.delete(`/products/${id}`),
 };

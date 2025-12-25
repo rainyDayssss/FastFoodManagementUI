@@ -443,3 +443,16 @@ body {
   padding: 8px 0;
 }
 
+/* OUT OF STOCK BADGE */
+.badge-out {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #ff9f1a; /* Orange instead of red */
+  color: white;
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: bold;
+}
+

@@ -10,22 +10,22 @@ export default function ProductPage() {
   const [editingProduct, setEditingProduct] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // FORMAT NUMBERS WITH COMMAS
   const formatNumber = (num) =>
-    num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    num.toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
 
-  // Load products from API
   const fetchProducts = async () => {
     try {
       setLoading(true);
       const res = await productService.getAll();
-      // Filter only active products
-      const activeProducts = res.data.filter((p) => p.isActive === true);
-      // Format price for display
-      const formattedProducts = activeProducts.map((p) => ({
+
+      const formattedProducts = res.data.map((p) => ({
         ...p,
         formattedPrice: formatNumber(p.price),
       }));
+
       setProducts(formattedProducts);
     } catch (err) {
       console.error("Failed to fetch products:", err);
@@ -51,7 +51,7 @@ export default function ProductPage() {
   const handleDelete = async (id) => {
     try {
       await productService.delete(id);
-      setProducts(products.filter((p) => p.id !== id));
+      setProducts((prev) => prev.filter((p) => p.id !== id));
     } catch (err) {
       console.error("Delete failed:", err);
     }
@@ -61,14 +61,19 @@ export default function ProductPage() {
     try {
       if (product.id) {
         await productService.update(product.id, product);
-        setProducts(
-          products.map((p) => (p.id === product.id ? { ...product, formattedPrice: formatNumber(product.price) } : p))
+        setProducts((prev) =>
+          prev.map((p) =>
+            p.id === product.id
+              ? { ...product, formattedPrice: formatNumber(product.price) }
+              : p
+          )
         );
       } else {
         const res = await productService.create(product);
-        if (res.data.isActive === true) {
-          setProducts([...products, { ...res.data, formattedPrice: formatNumber(res.data.price) }]);
-        }
+        setProducts((prev) => [
+          ...prev,
+          { ...res.data, formattedPrice: formatNumber(res.data.price) },
+        ]);
       }
     } catch (err) {
       console.error("Save failed:", err);
