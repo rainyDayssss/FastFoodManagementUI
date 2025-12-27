@@ -26,33 +26,77 @@ body {
 /* SIDEBAR */
 .sidebar {
   width: 220px;
-  background: #1f1f1f;
+  background: linear-gradient(180deg, #1f1f1f 0%, #1a1a1a 100%);
   padding: 20px;
   flex-shrink: 0;
+  border-right: 1px solid #2a2a2a;
 }
 
 .sidebar h2 {
   text-align: center;
   margin-bottom: 30px;
+  font-size: 1.5rem;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
 .sidebar ul {
   list-style: none;
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .sidebar a {
-  display: block;
-  padding: 10px;
-  border-radius: 8px;
-  color: #b0b0b0;
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 10px;
+  color: #9ca3af;
   text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
 }
 
-.sidebar a:hover,
+.sidebar a::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 3px;
+  background: #10b981;
+  transform: scaleY(0);
+  transition: transform 0.3s ease;
+}
+
+.sidebar a:hover {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  transform: translateX(4px);
+  padding-left: 20px;
+}
+
+.sidebar a:hover::before {
+  transform: scaleY(1);
+}
+
 .sidebar a.active {
-  background: #333;
-  color: #fff;
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%);
+  color: #10b981;
+  font-weight: 600;
+  box-shadow: inset 3px 0 0 0 #10b981;
+}
+
+.sidebar a.active::before {
+  transform: scaleY(1);
 }
 
 /* MAIN CONTENT */
@@ -102,6 +146,16 @@ body {
   color: #fff;
   cursor: pointer;
   font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.add-button:hover {
+  background: #059669;
+  transform: translateY(-1px);
+}
+
+.add-button:active {
+  transform: translateY(0);
 }
 
 /* PRODUCT GRID (more compact) */
@@ -117,6 +171,12 @@ body {
   background: #242424;
   padding: 12px;
   border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 /* IMAGE FRAME (smaller) */
@@ -165,14 +225,30 @@ body {
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.8rem;
+  transition: all 0.2s ease;
 }
 
 .edit {
   background: #3b82f6;
 }
 
+.edit:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
 .delete {
   background: #ef4444;
+}
+
+.delete:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+}
+
+.edit:active,
+.delete:active {
+  transform: translateY(0);
 }
 
 /* MODAL */
@@ -210,6 +286,45 @@ body {
   border: 1px solid #555;
   background: #1f1f1f;
   color: #fff;
+  transition: border-color 0.2s ease;
+}
+
+.product-form input:focus {
+  outline: none;
+  border-color: #10b981;
+}
+
+.product-form button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.product-form button[type="submit"] {
+  background: #10b981;
+  color: white;
+}
+
+.product-form button[type="submit"]:hover {
+  background: #059669;
+  transform: translateY(-1px);
+}
+
+.product-form button.cancel {
+  background: #6b7280;
+  color: white;
+}
+
+.product-form button.cancel:hover {
+  background: #4b5563;
+  transform: translateY(-1px);
+}
+
+.product-form button:active {
+  transform: translateY(0);
 }
 
 .actions {
@@ -334,6 +449,12 @@ body {
   background: #1f1f1f;
   padding: 16px;
   border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.order-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .order-card ul {
