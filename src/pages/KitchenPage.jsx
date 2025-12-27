@@ -9,6 +9,7 @@ export default function KitchenPage() {
     const saved = localStorage.getItem("cookingOrders");
     return saved ? JSON.parse(saved) : [];
   });
+  const [doneSuccess, setDoneSuccess] = useState(false);
 
   /* LOAD CONFIRMED ORDERS */
   const loadOrders = async () => {
@@ -48,7 +49,17 @@ export default function KitchenPage() {
     try {
       await orderService.updateStatus(orderId, { orderStatus: "Completed" });
       setCookingOrders(cookingOrders.filter((id) => id !== orderId));
+      
+      // Show success message
+      setDoneSuccess(true);
+      
+      // Reload orders
       loadOrders();
+      
+      // Hide success message after 3 seconds
+      setTimeout(() => {
+        setDoneSuccess(false);
+      }, 3000);
     } catch (err) {
       console.error(err);
       alert("Failed to update order status.");
@@ -60,6 +71,13 @@ export default function KitchenPage() {
       <div className="main-header">
         <h1>Kitchen Orders</h1>
       </div>
+
+      {/* SUCCESS MESSAGE */}
+      {doneSuccess && (
+        <div className="success-message">
+          ✓ Order marked as completed!
+        </div>
+      )}
 
       {loading ? (
         <p>Loading orders...</p>

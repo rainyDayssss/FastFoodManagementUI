@@ -9,6 +9,7 @@ export default function OrderPage() {
   const [tableNo, setTableNo] = useState("");
   const [loading, setLoading] = useState(true);
   const [hydrated, setHydrated] = useState(false);
+  const [orderSuccess, setOrderSuccess] = useState(false);
 
   /* =========================
      FORMAT NUMBERS WITH COMMAS
@@ -152,10 +153,18 @@ export default function OrderPage() {
 
       await orderService.create(createOrderDTO);
 
-      alert("Order placed successfully!");
+      // Show success message
+      setOrderSuccess(true);
+      
+      // Clear cart and table number
       localStorage.removeItem("cart");
       setCart([]);
       setTableNo("");
+
+      // Hide success message after 3 seconds
+      setTimeout(() => {
+        setOrderSuccess(false);
+      }, 3000);
     } catch (err) {
       console.error(err);
       alert("Failed to place order. Please try again.");
@@ -167,6 +176,13 @@ export default function OrderPage() {
       <div className="main-header">
         <h1>Order</h1>
       </div>
+
+      {/* SUCCESS MESSAGE */}
+      {orderSuccess && (
+        <div className="success-message">
+          ✓ Order placed successfully!
+        </div>
+      )}
 
       <div className="order-layout">
         {/* PRODUCTS */}

@@ -6,6 +6,7 @@ export default function PaymentPage() {
   const [orders, setOrders] = useState([]);
   const [selectedTable, setSelectedTable] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
 
   /* FORMAT NUMBERS WITH COMMAS */
   const formatNumber = (num) =>
@@ -60,8 +61,17 @@ export default function PaymentPage() {
         )
       );
 
+      // Show success message
+      setPaymentSuccess(true);
+      
+      // Clear selection and reload
       setSelectedTable(null);
       loadOrders();
+      
+      // Hide success message after 3 seconds
+      setTimeout(() => {
+        setPaymentSuccess(false);
+      }, 3000);
     } catch (err) {
       console.error(err);
       alert("Failed to confirm table payment.");
@@ -73,6 +83,13 @@ export default function PaymentPage() {
       <div className="main-header">
         <h1>Payments</h1>
       </div>
+
+      {/* SUCCESS MESSAGE */}
+      {paymentSuccess && (
+        <div className="success-message">
+          ✓ Payment confirmed successfully!
+        </div>
+      )}
 
       {loading ? (
         <p>Loading tables...</p>

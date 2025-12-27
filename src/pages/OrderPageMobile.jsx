@@ -10,6 +10,7 @@ export default function OrderPageMobile() {
   const [loading, setLoading] = useState(true);
   const [hydrated, setHydrated] = useState(false);
   const [showCart, setShowCart] = useState(false);
+  const [orderSuccess, setOrderSuccess] = useState(false);
 
   const formatNumber = (num) =>
     num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -97,11 +98,20 @@ export default function OrderPageMobile() {
         tableId: Number(tableNo),
         items: cart.map((item) => ({ productId: item.id, quantity: item.quantity })),
       });
-      alert("Order placed successfully!");
+      
+      // Show success message
+      setOrderSuccess(true);
+      
+      // Clear cart and close cart panel
       localStorage.removeItem("cart");
       setCart([]);
       setTableNo("");
       setShowCart(false);
+      
+      // Hide success message after 3 seconds
+      setTimeout(() => {
+        setOrderSuccess(false);
+      }, 3000);
     } catch (err) {
       console.error(err);
       alert("Failed to place order. Please try again.");
@@ -113,6 +123,13 @@ export default function OrderPageMobile() {
       <div className="main-header">
         <h1>Order</h1>
       </div>
+
+      {/* SUCCESS MESSAGE */}
+      {orderSuccess && (
+        <div className="success-message">
+          ✓ Order placed successfully!
+        </div>
+      )}
 
       {/* PRODUCTS LIST VERTICAL SCROLL */}
       <div
